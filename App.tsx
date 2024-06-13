@@ -14,7 +14,7 @@ import { View, ActivityIndicator } from 'react-native';
 const Stack = createStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
-  const { isLoggedIn, isLoading, logout } = useAuth(); // Importa logout
+  const { isLoggedIn, isLoading } = useAuth();
 
   if (isLoading) {
     return ( 
@@ -25,12 +25,13 @@ function AppNavigator() {
   }
   return (
     <Stack.Navigator>
+      {/* Define la pantalla "Home" y la pantalla "Start" en la misma pila */}
       <Stack.Screen name="Home" component={HomeScreen} /> 
+      <Stack.Screen name="Start" component={StartScreen} />
 
       {/* Estas pantallas se muestran solo si el usuario NO está autenticado */}
       {!isLoggedIn && (
         <>
-          <Stack.Screen name="Start" component={StartScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
         </>
