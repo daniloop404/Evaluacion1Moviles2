@@ -90,5 +90,6 @@ export const logoutUser = async () => {
 
 export const checkUserLoggedIn = async () => {
   const userToken = await AsyncStorage.getItem('userToken');
+  console.log("Token encontrado en el almacenamiento:", userToken); 
   return userToken !== null;
 };

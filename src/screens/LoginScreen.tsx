@@ -22,8 +22,8 @@ export default function LoginScreen() {
     }
 
     const result = await loginUser(email, password);
-    if (result?.success) {
-      login(email); // Pasa el correo electrónico a la función login
+    if (result?.success && result.user?.uid) { // Verifica si result.user existe
+      login(email, result.user.uid); // Pasa email y userId a login
       navigation.navigate('Home');
     } else {
       setError(result?.error ?? 'Ocurrió un error desconocido');

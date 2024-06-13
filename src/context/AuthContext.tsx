@@ -6,15 +6,18 @@ import { firebase } from '../constants/firebaseConfig';
 interface AuthContextType {
   isLoggedIn: boolean;
   userEmail: string | null;
-  isLoading: boolean; // ¡Añade isLoading a la interfaz!
-  login: (email: string) => void;
+  userId: string | null; // Agrega userId al contexto
+  isLoading: boolean; 
+  login: (email: string, userId: string) => void; // Actualiza login para aceptar userId
   logout: () => void;
 }
+
 
 const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   userEmail: null,
-  isLoading: true, // ¡Añade el valor inicial de isLoading aquí! 
+  isLoading: true,
+  userId: null, // <-- Agrega userId aquí con un valor inicial 
   login: () => {},
   logout: () => {},
 });
@@ -22,7 +25,9 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null); // Agrega estado para userId
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       const loggedIn = await checkUserLoggedIn();
@@ -31,26 +36,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (user) {
           setIsLoggedIn(true);
           setUserEmail(user.email); 
+          setUserId(user.uid); // Guarda el userId en el estado
         }
       }
-      setIsLoading(false); // Actualiza isLoading después de la verificación
+      setIsLoading(false); 
     };
     checkLoginStatus();
   }, []);
   
-  const login = (email: string) => {
+  const login = (email: string, userId: string) => { // Actualiza la función login
     setIsLoggedIn(true);
     setUserEmail(email);
+    setUserId(userId);
   };
 
   const logout = async () => {
     await logoutUser();
     setIsLoggedIn(false);
     setUserEmail(null);
+    setUserId(null); // Limpia el userId al cerrar sesión
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userEmail, isLoading, login, logout }}> 
+    <AuthContext.Provider value={{ isLoggedIn, userEmail, userId, isLoading, login, logout }}> 
       {children}
     </AuthContext.Provider>
   );
