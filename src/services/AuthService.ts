@@ -49,7 +49,7 @@ export const loginUser = async (email: string, password: string) => {
     const user = userCredential.user;
 
     if (user) {
-      await AsyncStorage.setItem('userToken', user.uid);
+      await AsyncStorage.setItem('userToken', user.uid); // Guarda el userId en AsyncStorage
       return { success: true, user };
     }
   } catch (error) {
@@ -82,7 +82,7 @@ export const loginUser = async (email: string, password: string) => {
 export const logoutUser = async () => {
   try {
     await firebase.auth().signOut();
-    await AsyncStorage.removeItem('userToken'); // Eliminar el token al cerrar sesión
+    await AsyncStorage.removeItem('userToken'); // Elimina el token al cerrar sesión
   } catch (error) {
     // manejo de errores
   }

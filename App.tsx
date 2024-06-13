@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'; // Importa useEffect
+import React, { useEffect } from 'react'; 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
@@ -12,10 +12,9 @@ import { View, ActivityIndicator } from 'react-native';
 
 
 const Stack = createStackNavigator<RootStackParamList>();
+
 function AppNavigator() {
-  const { isLoggedIn, isLoading } = useAuth();
-
-
+  const { isLoggedIn, isLoading, logout } = useAuth(); // Importa logout
 
   if (isLoading) {
     return ( 
@@ -26,9 +25,10 @@ function AppNavigator() {
   }
   return (
     <Stack.Navigator>
-      {isLoggedIn ? (
-        <Stack.Screen name="Home" component={HomeScreen} />
-      ) : (
+      <Stack.Screen name="Home" component={HomeScreen} /> 
+
+      {/* Estas pantallas se muestran solo si el usuario NO está autenticado */}
+      {!isLoggedIn && (
         <>
           <Stack.Screen name="Start" component={StartScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />

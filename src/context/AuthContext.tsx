@@ -6,9 +6,9 @@ import { firebase } from '../constants/firebaseConfig';
 interface AuthContextType {
   isLoggedIn: boolean;
   userEmail: string | null;
-  userId: string | null; // Agrega userId al contexto
+  userId: string | null; 
   isLoading: boolean; 
-  login: (email: string, userId: string) => void; // Actualiza login para aceptar userId
+  login: (email: string, userId: string) => void; 
   logout: () => void;
 }
 
@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   userEmail: null,
   isLoading: true,
-  userId: null, // <-- Agrega userId aquí con un valor inicial 
+  userId: null,
   login: () => {},
   logout: () => {},
 });
@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null); // Agrega estado para userId
+  const [userId, setUserId] = useState<string | null>(null); 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -36,15 +36,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (user) {
           setIsLoggedIn(true);
           setUserEmail(user.email); 
-          setUserId(user.uid); // Guarda el userId en el estado
+          setUserId(user.uid); 
         }
       }
       setIsLoading(false); 
     };
-    checkLoginStatus();
+    checkLoginStatus(); // Ejecuta checkLoginStatus al montar el componente
   }, []);
   
-  const login = (email: string, userId: string) => { // Actualiza la función login
+  const login = (email: string, userId: string) => {
     setIsLoggedIn(true);
     setUserEmail(email);
     setUserId(userId);
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await logoutUser();
     setIsLoggedIn(false);
     setUserEmail(null);
-    setUserId(null); // Limpia el userId al cerrar sesión
+    setUserId(null); 
   };
 
   return (

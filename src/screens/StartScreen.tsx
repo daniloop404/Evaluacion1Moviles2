@@ -11,7 +11,7 @@ export default function StartScreen() {
 
   useEffect(() => {
     setTimeout(async () => {
-      setLoading(false); // Simplemente oculta la pantalla de carga
+      setLoading(false);
     }, 0); 
   }, []); 
 

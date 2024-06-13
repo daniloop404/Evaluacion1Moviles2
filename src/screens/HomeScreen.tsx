@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Modal } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { addComment, getComments, getUserName, deleteComment, updateComment } from '../services/CommentsService'; 
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../constants/types'; // Importa RootStackParamList
 
 interface Comment {
   userId: string;
@@ -19,7 +21,7 @@ export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false); // Agrega un estado para indicar si se está editando
   const [editedComment, setEditedComment] = useState(''); // Agrega un estado para el texto editado
-
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>(); 
   useEffect(() => {
     const fetchComments = async () => {
       const commentsData = await getComments();
@@ -140,9 +142,12 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.button} onPress={handleSubmitComment}>
             <Text style={styles.buttonText}>Agregar Comentario</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-            <Text style={styles.buttonText}>Logout</Text>
-          </TouchableOpacity>
+          <TouchableOpacity style={styles.logoutButton} onPress={() => {
+  logout(); // Llama a logout del contexto
+  navigation.navigate('Start'); // Navega a StartScreen después de cerrar sesión
+}}>
+  <Text style={styles.buttonText}>Salir</Text>
+</TouchableOpacity>
         </View>
       </View>
 
