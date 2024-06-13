@@ -1,57 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { useAuth } from '../context/AuthContext';
-import { getComments, addComment } from '../services/CommentsService';
-
-interface Comment {
-  id: string;
-  user: string;
-  comment: string;
-}
 
 export default function HomeScreen() {
   const { logout, userEmail } = useAuth();
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [comment, setComment] = useState<string>('');
+  const [comment, setComment] = useState('');
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      const fetchedComments = await getComments();
-      setComments(fetchedComments);
-    };
-
-    fetchComments();
-  }, []);
-
-  const handleAddComment = async () => {
-    if (comment.trim() !== '') {
-      await addComment(userEmail ?? '', comment);
-      setComment('');
-      const fetchedComments = await getComments();
-      setComments(fetchedComments);
-    }
+  const handleCommentChange = (text: string) => {
+    setComment(text);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Comentarios</Text>
-      <Text style={styles.userEmail}>Usuario: {userEmail}</Text>
+      {userEmail && (
+        <Text style={styles.userText}>Usuario: {userEmail}</Text>
+      )}
       <TextInput
         style={styles.input}
-        placeholder="Ingrese su comentario"
+        placeholder="Ingresar comentario"
         value={comment}
-        onChangeText={setComment}
-      />
-      <Button title="Agregar comentario" onPress={handleAddComment} />
-      <FlatList
-        data={comments}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.commentItem}>
-            <Text style={styles.commentText}>{item.comment}</Text>
-            <Text style={styles.commentUser}>{item.user}</Text>
-          </View>
-        )}
+        onChangeText={handleCommentChange}
       />
       <TouchableOpacity style={styles.button} onPress={logout}>
         <Text style={styles.buttonText}>Cerrar Sesión</Text>
@@ -72,28 +41,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  userEmail: {
-    fontSize: 16,
-    marginBottom: 20,
+  userText: {
+    fontSize: 18,
+    marginBottom: 10,
     textAlign: 'center',
   },
   input: {
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 8,
-    marginBottom: 10,
-  },
-  commentItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  commentText: {
-    fontSize: 16,
-  },
-  commentUser: {
-    fontSize: 14,
-    color: 'gray',
+    marginBottom: 12,
+    paddingHorizontal: 8,
+    borderRadius: 5,
+    backgroundColor: '#fff',
   },
   button: {
     backgroundColor: '#2196F3',
@@ -115,3 +75,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+

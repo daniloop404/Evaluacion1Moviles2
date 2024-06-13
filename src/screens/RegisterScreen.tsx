@@ -20,7 +20,6 @@ export default function RegisterScreen() {
     }
 
     const result = await registerUser(email, password);
-    
     if (result?.success) {
       navigation.navigate('Login');
     } else {

@@ -1,25 +1,18 @@
-import { firebase } from '../constants/firebaseConfig';
+import { firebase } from "../constants/firebaseConfig";
 
-interface Comment {
-  id: string;
-  user: string;
-  comment: string;
-}
-
-export const getComments = async (): Promise<Comment[]> => {
-  const snapshot = await firebase.firestore().collection('comments').get();
-  const comments: Comment[] = snapshot.docs.map(doc => ({
-    id: doc.id,
-    user: doc.data().user,
-    comment: doc.data().comment,
-  }));
-  return comments;
-};
-
-export const addComment = async (user: string, comment: string): Promise<void> => {
-  await firebase.firestore().collection('comments').add({
-    user,
-    comment,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-  });
+export const getUserName = async (userId: string): Promise<string | null> => {
+  try {
+    const snapshot = await firebase.database().ref(`usuarios/${userId}`).once('value');
+    const userData = snapshot.val();
+    
+    if (userData && userData.email) {
+      return userData.email; // Retorna el correo electrónico del usuario
+    } else {
+      console.error("No se encontró el correo electrónico del usuario.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener el correo electrónico del usuario:", error);
+    return null;
+  }
 };

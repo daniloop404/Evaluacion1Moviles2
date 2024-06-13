@@ -4,28 +4,17 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../constants/types';
 import { useAuth } from '../context/AuthContext';
 import { checkUserLoggedIn } from '../services/AuthService';
-import { firebase } from '../constants/firebaseConfig'; // Importa firebase
 
 export default function StartScreen() {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { login } = useAuth();
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      const isLoggedIn = await checkUserLoggedIn();
-      if (isLoggedIn) {
-        const user = firebase.auth().currentUser;
-        if (user?.email) {
-          login(user.email); // Pasa el email del usuario a la función login
-          navigation.navigate('Home');
-        }
-      } else {
-        setLoading(false);
-      }
-    };
-    checkLoginStatus();
-  }, [navigation, login]);
+    setTimeout(async () => {
+      setLoading(false); // Simplemente oculta la pantalla de carga
+    }, 0); 
+  }, []); 
+
 
   if (loading) {
     return (
