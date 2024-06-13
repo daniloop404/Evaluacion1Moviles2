@@ -4,6 +4,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../constants/types';
 import { useAuth } from '../context/AuthContext';
 import { checkUserLoggedIn } from '../services/AuthService';
+import { firebase } from '../constants/firebaseConfig'; // Importa firebase
 
 export default function StartScreen() {
   const [loading, setLoading] = useState(true);
@@ -14,8 +15,11 @@ export default function StartScreen() {
     const checkLoginStatus = async () => {
       const isLoggedIn = await checkUserLoggedIn();
       if (isLoggedIn) {
-        login();
-        navigation.navigate('Home');
+        const user = firebase.auth().currentUser;
+        if (user?.email) {
+          login(user.email); // Pasa el email del usuario a la función login
+          navigation.navigate('Home');
+        }
       } else {
         setLoading(false);
       }

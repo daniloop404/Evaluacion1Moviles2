@@ -1,33 +1,58 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import { getComments, addComment } from '../services/CommentsService';
 
-const products = [
-  { name: 'mouse', price: 50 },
-  { name: 'laptop', price: 1500 },
-  { name: 'teclado', price: 80 },
-  { name: 'monitor', price: 120 },
-];
+interface Comment {
+  id: string;
+  user: string;
+  comment: string;
+}
 
 export default function HomeScreen() {
-  const { logout } = useAuth();
+  const { logout, userEmail } = useAuth();
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [comment, setComment] = useState<string>('');
 
-  const totalValue = products.reduce((total, product) => total + product.price, 0);
+  useEffect(() => {
+    const fetchComments = async () => {
+      const fetchedComments = await getComments();
+      setComments(fetchedComments);
+    };
+
+    fetchComments();
+  }, []);
+
+  const handleAddComment = async () => {
+    if (comment.trim() !== '') {
+      await addComment(userEmail ?? '', comment);
+      setComment('');
+      const fetchedComments = await getComments();
+      setComments(fetchedComments);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pantalla de "Home"</Text>
+      <Text style={styles.title}>Comentarios</Text>
+      <Text style={styles.userEmail}>Usuario: {userEmail}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Ingrese su comentario"
+        value={comment}
+        onChangeText={setComment}
+      />
+      <Button title="Agregar comentario" onPress={handleAddComment} />
       <FlatList
-        data={products}
-        keyExtractor={(item) => item.name}
+        data={comments}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.productItem}>
-            <Text style={styles.productName}>{item.name}</Text>
-            <Text style={styles.productPrice}>${item.price}</Text>
+          <View style={styles.commentItem}>
+            <Text style={styles.commentText}>{item.comment}</Text>
+            <Text style={styles.commentUser}>{item.user}</Text>
           </View>
         )}
       />
-      <Text style={styles.totalText}>Valor total: ${totalValue}</Text>
       <TouchableOpacity style={styles.button} onPress={logout}>
         <Text style={styles.buttonText}>Cerrar Sesión</Text>
       </TouchableOpacity>
@@ -47,24 +72,28 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  productItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  userEmail: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 8,
+    marginBottom: 10,
+  },
+  commentItem: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
-  productName: {
-    fontSize: 18,
+  commentText: {
+    fontSize: 16,
   },
-  productPrice: {
-    fontSize: 18,
-  },
-  totalText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
+  commentUser: {
+    fontSize: 14,
+    color: 'gray',
   },
   button: {
     backgroundColor: '#2196F3',

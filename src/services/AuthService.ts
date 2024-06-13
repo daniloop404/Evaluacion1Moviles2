@@ -7,6 +7,10 @@ export const registerUser = async (email: string, password: string) => {
     const user = userCredential.user;
 
     if (user) {
+      // Guarda solo el correo electrónico en Realtime Database
+      await firebase.database().ref(`usuarios/${user.uid}`).set({
+        email: email 
+      });
       return { success: true, user };
     }
   } catch (error) {
@@ -78,7 +82,7 @@ export const loginUser = async (email: string, password: string) => {
 export const logoutUser = async () => {
   try {
     await firebase.auth().signOut();
-    await AsyncStorage.removeItem('userToken'); // Eliminar el token al cerrar sesión
+    await AsyncStorage.removeItem('userToken');
   } catch (error) {
     // manejo de errores
   }
